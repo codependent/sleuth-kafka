@@ -1,0 +1,40 @@
+spring:
+  cloud:
+    stream:
+      function:
+        definition: event;consumer
+      bindings:
+        event-out-0:
+          destination: events
+          producer:
+            useNativeEncoding: true
+        consumer-in-0:
+          destination: events
+          consumer:
+            useNativeEncoding: true
+      kafka:
+        binder:
+          producer-properties:
+            enable:
+              idempotence: false
+            retries: 0x7fffffff
+            acks: all
+            key:
+              serializer: org.apache.kafka.common.serialization.StringSerializer
+            value:
+              serializer: org.springframework.kafka.support.serializer.JsonSerializer
+            request:
+              timeout:
+                ms: 5000
+          consumer-properties:
+            key:
+              serializer: org.apache.kafka.common.serialization.StringSerializer
+              value:
+                serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
+logging:
+  level:
+    com.codependent: debug

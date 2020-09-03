@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: sleuth-kafka
+
+---
+spring:
+  profiles: local
+
+server:
+  port: 8084
+
+logging:
+  level:
+    org.springframework.web: debug
