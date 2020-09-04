@@ -19,5 +19,8 @@ class RequestLoggingFilter : WebFilter {
             logger.debug("Request URI {} - headers {}", uri, headers)
         }
         return chain.filter(exchange)
+                .doOnTerminate {
+                    logger.debug("|---> Response - URI {} - statusCode {}", uri, exchange.response.statusCode)
+                }
     }
 }
