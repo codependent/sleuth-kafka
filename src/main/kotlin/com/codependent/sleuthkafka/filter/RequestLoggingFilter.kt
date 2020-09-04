@@ -20,7 +20,9 @@ class RequestLoggingFilter : WebFilter {
         }
         return chain.filter(exchange)
                 .doOnTerminate {
-                    logger.debug("|---> Response - URI {} - statusCode {}", uri, exchange.response.statusCode)
+                    if (!uri.path.contains("/actuator")) {
+                        logger.debug("|---> Response - URI {} - statusCode {}", uri, exchange.response.statusCode)
+                    }
                 }
     }
 }
