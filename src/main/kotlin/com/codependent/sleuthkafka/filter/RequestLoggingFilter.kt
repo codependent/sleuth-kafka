@@ -15,11 +15,13 @@ class RequestLoggingFilter : WebFilter {
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val uri = exchange.request.uri
         if (!uri.path.contains("/actuator")) {
-            if (logger.isDebugEnabled) {
-                logger.debug("|---> Request - URI {}", uri)
-            } else if (logger.isTraceEnabled) {
-                val headers = exchange.request.headers
-                logger.trace("|---> Request - URI {} - headers {}", uri, headers)
+            if (!uri.path.contains("/actuator")) {
+                if (logger.isTraceEnabled) {
+                    val headers = exchange.request.headers
+                    logger.trace("|---> Request - URI {} - headers {}", uri, headers)
+                } else if (logger.isDebugEnabled) {
+                    logger.debug("|---> Request - URI {}", uri)
+                }
             }
         }
         return chain.filter(exchange)
