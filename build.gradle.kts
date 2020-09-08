@@ -19,7 +19,7 @@ repositories {
     maven { url = uri("https://packages.confluent.io/maven") }
 }
 
-extra["springCloudVersion"] = "Hoxton.SR6"
+extra["springCloudVersion"] = "Hoxton.SR7"
 extra["springCloudStreamVersion"] = "Horsham.SR6"
 
 dependencies {
