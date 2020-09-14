@@ -12,6 +12,5 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 class SleuthKafkaApplication
 
 fun main(args: Array<String>) {
-    //BlockHound.install()
     runApplication<SleuthKafkaApplication>(*args)
 }
