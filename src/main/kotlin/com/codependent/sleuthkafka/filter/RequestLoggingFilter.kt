@@ -17,10 +17,9 @@ class RequestLoggingFilter : WebFilter {
         val uri = exchange.request.uri
         val headers = exchange.request.headers
         if (!uri.path.contains("/actuator")) {
-            if (logger.isTraceEnabled) {
-
+            if (logger.isDebugEnabled) {
                 logger.debug("|---> Request - {} {} - headers {}", method, uri, headers)
-            } else if (logger.isDebugEnabled) {
+            } else {
                 logger.info("|---> Request - {} {}", method, uri)
             }
         }
