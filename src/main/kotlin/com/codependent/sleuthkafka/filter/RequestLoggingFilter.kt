@@ -19,7 +19,7 @@ class RequestLoggingFilter : WebFilter {
         if (!uri.path.contains("/actuator")) {
             if (logger.isTraceEnabled) {
 
-                logger.trace("|---> Request - {} {} - headers {}", method, uri, headers)
+                logger.debug("|---> Request - {} {} - headers {}", method, uri, headers)
             } else if (logger.isDebugEnabled) {
                 logger.info("|---> Request - {} {}", method, uri)
             }
