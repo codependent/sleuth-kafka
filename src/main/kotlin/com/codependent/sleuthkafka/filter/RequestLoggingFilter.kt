@@ -21,13 +21,13 @@ class RequestLoggingFilter : WebFilter {
 
                 logger.trace("|---> Request - {} {} - headers {}", method, uri, headers)
             } else if (logger.isDebugEnabled) {
-                logger.debug("|---> Request - {} {}", method, uri)
+                logger.info("|---> Request - {} {}", method, uri)
             }
         }
         return chain.filter(exchange)
                 .doOnTerminate {
                     if (!uri.path.contains("/actuator")) {
-                        logger.debug("|---> Response - {} {} - statusCode {}", method, uri, exchange.response.statusCode)
+                        logger.info("|---> Response - {} {} - statusCode {}", method, uri, exchange.response.statusCode)
                     }
                 }
     }
