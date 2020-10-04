@@ -6,6 +6,7 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
+import reactor.core.publisher.switchIfEmpty
 
 @Component
 class RequestLoggingFilter : WebFilter {
@@ -24,10 +25,17 @@ class RequestLoggingFilter : WebFilter {
             }
         }
         return chain.filter(exchange)
-                .doOnTerminate {
-                    if (!uri.path.contains("/actuator")) {
-                        logger.info("|---> Response - {} {} - statusCode {}", method, uri, exchange.response.statusCode)
-                    }
+                .switchIfEmpty {
+                    Mono.subscriberContext()
+                            .flatMap {
+                                if (!uri.path.contains("/actuator")) {
+                                    logger.info("|---> Response - {} {} - statusCode {} - time {}ms",
+                                            method, uri, exchange.response.statusCode, (System.currentTimeMillis() - (it.get("processingStartTime") as Long)))
+                                }
+                                Mono.empty<Void>()
+                            }
+                }.subscriberContext {
+                    it.put("processingStartTime", System.currentTimeMillis())
                 }
     }
 }
