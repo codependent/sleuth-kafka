@@ -6,7 +6,11 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
+import reactor.core.publisher.SignalType
+import reactor.core.publisher.SignalType.*
 import reactor.core.publisher.switchIfEmpty
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicReference
 
 @Component
 class RequestLoggingFilter : WebFilter {
@@ -24,18 +28,16 @@ class RequestLoggingFilter : WebFilter {
                 logger.info("|---> Request - {} {}", method, uri)
             }
         }
+        val startTime = AtomicReference<Long>()
         return chain.filter(exchange)
-                .switchIfEmpty {
-                    Mono.subscriberContext()
-                            .flatMap {
-                                if (!uri.path.contains("/actuator")) {
-                                    logger.info("|---> Response - {} {} - statusCode {} - time {}ms",
-                                            method, uri, exchange.response.statusCode, (System.currentTimeMillis() - (it.get("processingStartTime") as Long)))
-                                }
-                                Mono.empty<Void>()
-                            }
-                }.subscriberContext {
-                    it.put("processingStartTime", System.currentTimeMillis())
+                .doOnSubscribe { startTime.set(System.nanoTime()) }
+                .doFinally {
+                    if (it == ON_COMPLETE) {
+                        if (!uri.path.contains("/actuator")) {
+                            logger.info("|---> Response - {} {} - statusCode {} - time {}ms",
+                                    method, uri, exchange.response.statusCode, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime.get()))
+                        }
+                    }
                 }
     }
 }
