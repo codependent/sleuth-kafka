@@ -18,6 +18,7 @@ class RequestLoggingFilter : WebFilter {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
+        val receivedRequestStartTime = System.nanoTime()
         val method = exchange.request.method
         val uri = exchange.request.uri
         val headers = exchange.request.headers
@@ -34,8 +35,11 @@ class RequestLoggingFilter : WebFilter {
                 .doFinally {
                     if (it == ON_COMPLETE) {
                         if (!uri.path.contains("/actuator")) {
-                            logger.info("|---> Response - {} {} - statusCode {} - time {}ms",
-                                    method, uri, exchange.response.statusCode, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime.get()))
+                            val currentNano = System.nanoTime()
+                            val totalRequestTime = TimeUnit.NANOSECONDS.toMillis(currentNano - receivedRequestStartTime)
+                            val processingRequestTime = TimeUnit.NANOSECONDS.toMillis(currentNano - startTime.get())
+                            logger.info("|---> Response - {} {} - statusCode {} - request time {}ms - processing time {}ms",
+                                    method, uri, exchange.response.statusCode, totalRequestTime, processingRequestTime)
                         }
                     }
                 }
