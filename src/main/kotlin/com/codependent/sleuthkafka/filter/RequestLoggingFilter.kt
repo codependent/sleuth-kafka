@@ -6,10 +6,8 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
-import reactor.core.publisher.SignalType
-import reactor.core.publisher.SignalType.*
-import reactor.core.publisher.switchIfEmpty
-import java.util.concurrent.TimeUnit
+import reactor.core.publisher.SignalType.ON_COMPLETE
+import java.util.concurrent.TimeUnit.*
 import java.util.concurrent.atomic.AtomicReference
 
 @Component
@@ -36,8 +34,8 @@ class RequestLoggingFilter : WebFilter {
                     if (it == ON_COMPLETE) {
                         if (!uri.path.contains("/actuator")) {
                             val currentNano = System.nanoTime()
-                            val totalRequestTime = TimeUnit.NANOSECONDS.toMillis(currentNano - receivedRequestStartTime)
-                            val processingRequestTime = TimeUnit.NANOSECONDS.toMillis(currentNano - startTime.get())
+                            val totalRequestTime = NANOSECONDS.toMillis(currentNano - receivedRequestStartTime)
+                            val processingRequestTime = NANOSECONDS.toMillis(currentNano - startTime.get())
                             logger.info("|---> Response - {} {} - statusCode {} - request time {}ms - processing time {}ms",
                                     method, uri, exchange.response.statusCode, totalRequestTime, processingRequestTime)
                         }
