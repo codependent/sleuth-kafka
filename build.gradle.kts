@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "2.3.5.RELEASE"
+    id("org.springframework.boot") version "2.3.7.RELEASE"
     id("io.spring.dependency-management") version "1.0.8.RELEASE"
     kotlin("jvm") version "1.4.10"
     kotlin("plugin.spring") version "1.4.10"
@@ -19,8 +19,8 @@ repositories {
     maven { url = uri("https://packages.confluent.io/maven") }
 }
 
-extra["springCloudVersion"] = "Hoxton.SR8"
-extra["springCloudStreamVersion"] = "Horsham.SR8"
+extra["springCloudVersion"] = "Hoxton.SR9"
+extra["springCloudStreamVersion"] = "Horsham.SR10"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
